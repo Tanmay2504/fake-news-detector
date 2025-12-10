@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: fake-news-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount models directory
+      - ./models:/app/models
+      # Mount Google credentials
+      - ./google-vision-credentials.json:/app/google-vision-credentials.json:ro
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - MODEL_DIR=models
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/google-vision-credentials.json
+      - CACHE_ENABLED=true
+      - CACHE_MAX_SIZE=1000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - fake-news-network
+
+  # Optional: Redis for distributed caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: fake-news-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - fake-news-network
+
+  # Optional: Nginx reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: fake-news-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - api
+  #   restart: unless-stopped
+  #   networks:
+  #     - fake-news-network
+
+networks:
+  fake-news-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:
