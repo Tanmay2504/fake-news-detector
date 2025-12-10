@@ -31,3 +31,10 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+# Large training datasets (not needed in repo)
+datasets/WELFake_Dataset.csv
+datasets/Fake.csv
+datasets/True.csv
+datasets/Fake2.csv
+datasets/True2.csv
