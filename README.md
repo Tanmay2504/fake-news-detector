@@ -1,4 +1,13 @@
+<div align="center">
+
 # Fake News Detection System - Backend
+
+[![CI](https://github.com/Tanmay2504/fake-news-detector/actions/workflows/ci.yml/badge.svg)](https://github.com/Tanmay2504/fake-news-detector/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+</div>
 
 Production-ready fake news detection API using ensemble ML models and visual analysis.
 
@@ -12,6 +21,18 @@ Production-ready fake news detection API using ensemble ML models and visual ana
 - **CORS Enabled**: Ready for frontend integration
 
 ## Quick Start
+
+Clone and set up (Windows PowerShell):
+
+```powershell
+git clone https://github.com/Tanmay2504/fake-news-detector.git
+cd fake-news-detector
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install --upgrade pip
+pip install -r requirements.txt
+python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')"
+```
 
 1. **Install Dependencies**
 ```bash
