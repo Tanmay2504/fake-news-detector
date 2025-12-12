@@ -262,6 +262,28 @@ async def detect_visual(
             # Detect
             result = detector.detect(tmp_path, context if context else None)
             
+            # Convert numpy types to Python native types for JSON serialization
+            def convert_numpy_types(obj):
+                """Recursively convert numpy types to Python native types"""
+                import numpy as np
+                
+                if isinstance(obj, dict):
+                    return {k: convert_numpy_types(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_numpy_types(item) for item in obj]
+                elif isinstance(obj, (np.bool_, bool)):
+                    return bool(obj)
+                elif isinstance(obj, (np.integer, int)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating, float)):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                else:
+                    return obj
+            
+            result = convert_numpy_types(result)
+            
             return result
             
         finally:

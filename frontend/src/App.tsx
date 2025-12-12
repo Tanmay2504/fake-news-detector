@@ -77,7 +77,6 @@ function App() {
                 <Image className="h-4 w-4" />
                 Visual Detection
               </Button>
-
               {/* Dark Mode Toggle */}
               <div className="ml-4 flex items-center gap-2">
                 <Sun className="h-4 w-4 text-slate-600 dark:text-slate-400" />
@@ -97,41 +96,6 @@ function App() {
             onStartVisual={() => setActiveTab('visual')}
           />
         )}
-        {activeTab === 'text' && <FakeNewsDetector />}
-        {activeTab === 'visual' && <VisualDetector />}
-      </main>
-    </div>
-  );
-}
-                onClick={() => setActiveTab('text')}
-                className="gap-2"
-              >
-                <FileText className="h-4 w-4" />
-                Text Analysis
-              </Button>
-              <Button
-                variant={activeTab === 'visual' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setActiveTab('visual')}
-                className="gap-2"
-              >
-                <Image className="h-4 w-4" />
-                Visual Detection
-              </Button>
-            </div>
-
-            {/* Dark Mode Toggle */}
-            <div className="flex items-center gap-3">
-              <Sun className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-              <Switch checked={darkMode} onCheckedChange={toggleDarkMode} />
-              <Moon className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main>
         {activeTab === 'text' && <FakeNewsDetector />}
         {activeTab === 'visual' && <VisualDetector />}
       </main>

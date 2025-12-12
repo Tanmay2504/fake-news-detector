@@ -42,6 +42,18 @@ export interface HealthResponse {
   cache_stats: any;
 }
 
+export interface ExplainRequest {
+  text: string;
+  model_name?: string;
+}
+
+export interface ExplainResponse {
+  explanation: [string, number][];
+  prediction: string;
+  probability_fake: number;
+  probability_real: number;
+}
+
 export const api = {
   async predict(data: PredictRequest): Promise<PredictResponse> {
     const response = await axios.post<PredictResponse>(`${API_BASE_URL}/predict`, data);
@@ -58,18 +70,23 @@ export const api = {
     return response.data;
   },
 
-  async detectVisual(image: File, context?: { event?: string; location?: string; date?: string }) {
+  async detectVisual(image: File, event?: string, location?: string, date?: string) {
     const formData = new FormData();
     formData.append('image', image);
-    if (context?.event) formData.append('event', context.event);
-    if (context?.location) formData.append('location', context.location);
-    if (context?.date) formData.append('date', context.date);
+    if (event) formData.append('event', event);
+    if (location) formData.append('location', location);
+    if (date) formData.append('date', date);
 
     const response = await axios.post(`${API_BASE_URL}/detect-visual`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  },
+
+  async explain(data: ExplainRequest): Promise<ExplainResponse> {
+    const response = await axios.post<ExplainResponse>(`${API_BASE_URL}/explain`, data);
     return response.data;
   },
 };

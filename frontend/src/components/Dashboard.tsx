@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -9,13 +8,10 @@ import {
   Eye, 
   Zap, 
   Target,
-  BarChart3,
   FileText,
   Image as ImageIcon,
-  AlertTriangle,
   CheckCircle2,
-  TrendingUp,
-  Clock
+  TrendingUp
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
