@@ -29,3 +29,4 @@ nltk==3.8.1
 
 # Utilities
 requests==2.31.0
+colorama==0.4.6

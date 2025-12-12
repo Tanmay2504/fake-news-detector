@@ -60,10 +60,15 @@ class ExplainResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     ok: bool = Field(..., description="System health status")
+    status: str = Field(..., description="Status message")
     ensemble_loaded: bool = Field(..., description="Whether ensemble is loaded")
     models_available: List[str] = Field(..., description="Available models")
+    models_count: int = Field(..., description="Number of models loaded")
     model_dir: str = Field(..., description="Model directory path")
     cache_stats: Optional[dict] = Field(None, description="Cache statistics")
+    dependencies: Optional[dict] = Field(None, description="Python dependencies status")
+    datasets_found: Optional[int] = Field(None, description="Number of datasets found")
+    google_vision_available: Optional[bool] = Field(None, description="Google Vision API status")
 
 
 # Initialize router
@@ -303,28 +308,83 @@ async def detect_visual(
 @router.get("/health", response_model=HealthResponse)
 async def health():
     """
-    Check system health and model status
+    Comprehensive system health check
+    Returns detailed status of all components
     """
     try:
+        # Get ensemble info
         model_info = ensemble.get_model_info()
         cache_stats = cache.get_stats()
         
+        # Check dependencies
+        dependencies = {}
+        critical_deps = ['fastapi', 'scikit-learn', 'lime', 'transformers', 'torch']
+        for dep in critical_deps:
+            try:
+                __import__(dep.replace('-', '_'))
+                dependencies[dep] = True
+            except ImportError:
+                dependencies[dep] = False
+        
+        # Check datasets
+        import os
+        dataset_files = [
+            'datasets/train.csv',
+            'datasets/test.csv',
+            'datasets/Constraint_Train.csv',
+            'datasets/Constraint_Test.csv'
+        ]
+        datasets_found = sum(1 for f in dataset_files if os.path.exists(f))
+        
+        # Check Google Vision
+        google_vision_available = False
+        try:
+            from google.cloud import vision
+            google_creds = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'google-vision-credentials.json')
+            if os.path.exists(google_creds):
+                google_vision_available = True
+        except ImportError:
+            pass
+        
+        # Determine overall status
+        models_count = len(model_info['models_available'])
+        if model_info['loaded'] and models_count >= 3:
+            status = "OPERATIONAL"
+            ok = True
+        elif models_count >= 1:
+            status = "PARTIAL"
+            ok = True
+        else:
+            status = "NOT_READY"
+            ok = False
+        
         return HealthResponse(
-            ok=True,
+            ok=ok,
+            status=status,
             ensemble_loaded=model_info['loaded'],
             models_available=model_info['models_available'],
+            models_count=models_count,
             model_dir=model_info['model_dir'],
-            cache_stats=cache_stats
+            cache_stats=cache_stats,
+            dependencies=dependencies,
+            datasets_found=datasets_found,
+            google_vision_available=google_vision_available
         )
         
     except Exception as e:
         print(f"Error in /health: {str(e)}")
+        traceback.print_exc()
         return HealthResponse(
             ok=False,
+            status="ERROR",
             ensemble_loaded=False,
             models_available=[],
+            models_count=0,
             model_dir="models",
-            cache_stats=None
+            cache_stats=None,
+            dependencies=None,
+            datasets_found=0,
+            google_vision_available=False
         )
 
 
