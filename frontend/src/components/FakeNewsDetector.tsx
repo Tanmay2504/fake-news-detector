@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { api, type PredictResponse } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
@@ -173,43 +175,48 @@ export function FakeNewsDetector() {
             </div>
 
             {/* Models Used */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-              <h3 className="font-semibold text-lg mb-4">Models Used</h3>
-              <div className="flex flex-wrap gap-2">
-                {result.models_used.map((model) => (
-                  <span
-                    key={model}
-                    className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium"
-                  >
-                    {model.replace('_', ' ')}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Models Used</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {result.models_used.map((model) => (
+                    <Badge key={model} variant="secondary">
+                      {model.replace('_', ' ')}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Rule-based Analysis */}
             {result.rule_based_analysis && (
-              <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-                <h3 className="font-semibold text-lg mb-4">Rule-Based Analysis</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                      Fake Indicators
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Rule-Based Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                        Fake Indicators
+                      </div>
+                      <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                        {result.rule_based_analysis.fake_score}
+                      </div>
                     </div>
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                      {result.rule_based_analysis.fake_score}
+                    <div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                        Real Indicators
+                      </div>
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {result.rule_based_analysis.real_score}
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                      Real Indicators
-                    </div>
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      {result.rule_based_analysis.real_score}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
           </motion.div>
         )}

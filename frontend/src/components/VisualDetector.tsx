@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { Upload, Loader2, AlertCircle, CheckCircle, Image as ImageIcon } from 'lucide-react';
@@ -188,62 +190,69 @@ export function VisualDetector() {
             {result && (
               <div className="space-y-6">
                 {/* Overall Assessment */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-                  <h3 className="font-semibold text-lg mb-4 flex items-center">
-                    <CheckCircle className="h-6 w-6 mr-2 text-green-600 dark:text-green-400" />
-                    Analysis Complete
-                  </h3>
-                  <div className="space-y-3">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <CheckCircle className="h-6 w-6 mr-2 text-green-600 dark:text-green-400" />
+                      Analysis Complete
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
                     {result.manipulation_detected !== undefined && (
                       <div className="flex justify-between items-center">
                         <span className="text-slate-700 dark:text-slate-300">Manipulation Detected</span>
-                        <span className={`font-semibold ${result.manipulation_detected ? 'text-red-600' : 'text-green-600'}`}>
+                        <Badge variant={result.manipulation_detected ? 'destructive' : 'success'}>
                           {result.manipulation_detected ? 'Yes' : 'No'}
-                        </span>
+                        </Badge>
                       </div>
                     )}
                     {result.ai_generated_score !== undefined && (
                       <div className="flex justify-between items-center">
                         <span className="text-slate-700 dark:text-slate-300">AI Generated Score</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100">
+                        <Badge variant="secondary">
                           {(result.ai_generated_score * 100).toFixed(1)}%
-                        </span>
+                        </Badge>
                       </div>
                     )}
                     {result.confidence !== undefined && (
                       <div className="flex justify-between items-center">
                         <span className="text-slate-700 dark:text-slate-300">Confidence</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100">
+                        <Badge variant="secondary">
                           {(result.confidence * 100).toFixed(1)}%
-                        </span>
+                        </Badge>
                       </div>
                     )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
                 {/* Labels */}
                 {result.labels && result.labels.length > 0 && (
-                  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-                    <h3 className="font-semibold text-lg mb-4">Detected Labels</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {result.labels.slice(0, 10).map((label: any, idx: number) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm"
-                        >
-                          {typeof label === 'string' ? label : label.description || label.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Detected Labels</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        {result.labels.slice(0, 10).map((label: any, idx: number) => (
+                          <Badge key={idx} variant="outline">
+                            {typeof label === 'string' ? label : label.description || label.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
 
                 {/* Additional Details */}
                 {result.description && (
-                  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-                    <h3 className="font-semibold text-lg mb-3">Description</h3>
-                    <p className="text-slate-700 dark:text-slate-300">{result.description}</p>
-                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Description</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-slate-700 dark:text-slate-300">{result.description}</p>
+                    </CardContent>
+                  </Card>
                 )}
 
                 {/* Raw Result for Debugging */}
