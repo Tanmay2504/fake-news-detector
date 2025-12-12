@@ -229,5 +229,9 @@ def get_ensemble(model_dir: str = "models") -> SmartEnsemble:
     global _ensemble
     if _ensemble is None:
         _ensemble = SmartEnsemble(model_dir)
-        _ensemble.load_models()
+        # Allow CI/tests to skip model loading to avoid heavy dependencies
+        if os.getenv("SKIP_MODEL_LOAD") == "1":
+            print("[INFO] SKIP_MODEL_LOAD=1: Skipping model loading for tests/CI")
+        else:
+            _ensemble.load_models()
     return _ensemble
